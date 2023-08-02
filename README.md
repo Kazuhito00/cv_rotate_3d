@@ -11,24 +11,16 @@ OpenCVでX軸、Y軸、Z軸の回転を行うサンプルです。<br>
 python sample.py
 ```
 ```python
-import cv2
-from cv_rotate_3d import rotate_3d
-
-image = cv2.imread('sample.jpg')
-
 image = rotate_3d(
     image,
-    theta=30,
-    phi=30,
-    gamma=30,
-    dx=0,
-    dy=0,
-    dz=0,
-    color=(0, 255, 0),
+    theta=30,          # x軸を中心に回転(度)
+    phi=30,            # y軸を中心に回転(度)
+    gamma=30,          # z軸を中心に回転(度)
+    dx=0,              # x軸方向に平行移動(ピクセル)
+    dy=0,              # y軸方向に平行移動(ピクセル)
+    dz=0,              # z軸方向に平行移動(ピクセル)
+    color=(0, 255, 0), # 回転時に発生する余白の色
 )
-
-cv2.imshow('cv rotate 3d sample', image)
-key = cv2.waitKey(-1)
 ```
 
 # Note
