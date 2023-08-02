@@ -1,6 +1,6 @@
 # cv_rotate_3d
 OpenCVでX軸、Y軸、Z軸の回転を行うサンプルです。<br>
-![image](https://github.com/Kazuhito00/cv_rotate_3d/assets/37477845/b969c395-87d9-4b1a-b1fb-31038104b54c)
+![image](https://github.com/Kazuhito00/cv_rotate_3d/assets/37477845/f1a36082-5762-47c1-84d7-db28be57648e)
 
 # Requirement
 * OpenCV 3.4.2 or later
