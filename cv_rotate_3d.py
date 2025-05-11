@@ -5,58 +5,74 @@ import numpy as np
 
 def rotate_3d(
     image,
-    theta=0,  # ピッチ角（X軸回転）
-    phi=0,  # ヨー角（Y軸回転）
-    gamma=0,  # ロール角（Z軸回転）
-    dx=0,  # X方向の平行移動
-    dy=0,  # Y方向の平行移動
-    dz=0,  # Z方向の平行移動
-    color=(0, 0, 0),  # 背景色（transparent=False時に有効）
-    transparent: bool = False,  # 背景を透明にするかどうか
+    theta=0,
+    phi=0,
+    gamma=0,
+    dx=0,
+    dy=0,
+    dz=0,
+    color=(0, 0, 0),
+    transparent: bool = False,
 ):
     image_height, image_width = image.shape[:2]
     num_channels = image.shape[2] if len(image.shape) == 3 else 1
 
-    # チャンネル数を確認（3=BGR, 4=BGRA）
     is_bgr = num_channels == 3
     is_bgra = num_channels == 4
 
-    # 透過処理の有無に応じてチャンネル変換
     if transparent:
         if is_bgr:
-            # BGR → BGRA に変換し、背景色のアルファ値を0に
             image = cv2.cvtColor(image, cv2.COLOR_BGR2BGRA)
             color = color + (0,)
         elif not is_bgra:
             raise ValueError("透過を有効にするには、BGRまたはBGRA画像が必要です。")
     else:
         if is_bgra:
-            # BGRA → BGR に変換し、アルファ値を無視
             image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
             color = color[:3]
 
-    # 回転角度（度）をラジアンに変換
     pitch, yaw, roll = _get_rad(theta, phi, gamma)
-
-    # 画像の対角長を基に焦点距離を推定
     d = np.sqrt(image_height**2 + image_width**2)
     focal = d / (2 * np.sin(roll) if np.sin(roll) != 0 else 1)
-    dz_ = focal + dz  # Z方向のオフセットを加味
+    dz_ = focal + dz
 
-    # 射影変換行列を生成
+    # 射影変換行列を取得
     mat = _get_M(image, focal, pitch, yaw, roll, dx, dy, dz_)
 
-    # warpPerspectiveで変換を実行（背景色または透過色を適用）
+    # 元画像の4隅の座標を取得
+    h, w = image.shape[:2]
+    corners = np.array([[0, 0], [w, 0], [w, h], [0, h]], dtype=np.float32).reshape(
+        -1, 1, 2
+    )
+
+    # 射影変換での変換後の座標を計算
+    transformed_corners = cv2.perspectiveTransform(corners, mat)
+
+    # 新しい画像サイズ（見切れない範囲）
+    x_coords = transformed_corners[:, 0, 0]
+    y_coords = transformed_corners[:, 0, 1]
+    min_x, max_x = np.min(x_coords), np.max(x_coords)
+    min_y, max_y = np.min(y_coords), np.max(y_coords)
+
+    new_w = int(np.ceil(max_x - min_x))
+    new_h = int(np.ceil(max_y - min_y))
+
+    # オフセット行列（画像が切れないように中央に移動）
+    offset_mat = np.array([[1, 0, -min_x], [0, 1, -min_y], [0, 0, 1]])
+
+    final_mat = offset_mat @ mat
+
+    # warpPerspective で画像変換（見切れ防止＆背景色反映）
     result = cv2.warpPerspective(
         image.copy(),
-        mat,
-        (image_width, image_height),
+        final_mat,
+        (new_w, new_h),
         flags=cv2.INTER_LINEAR,
         borderMode=cv2.BORDER_CONSTANT,
         borderValue=color,
     )
 
-    # 透過を使わない場合はBGRに戻す
+    # 透過不要ならBGRA → BGRへ変換
     if not transparent and result.shape[2] == 4:
         result = cv2.cvtColor(result, cv2.COLOR_BGRA2BGR)
 
