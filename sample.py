@@ -8,9 +8,6 @@ temp_image = rotate_3d(
     theta=30,
     phi=30,
     gamma=30,
-    dx=0,
-    dy=0,
-    dz=0,
     color=(0, 255, 0),
 )
 
@@ -22,9 +19,6 @@ temp_image = rotate_3d(
     theta=30,
     phi=30,
     gamma=30,
-    dx=0,
-    dy=0,
-    dz=0,
     transparent=True,
 )
 

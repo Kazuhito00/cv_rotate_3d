@@ -8,9 +8,6 @@ def rotate_3d(
     theta=0,
     phi=0,
     gamma=0,
-    dx=0,
-    dy=0,
-    dz=0,
     color=(0, 0, 0),
     transparent: bool = False,
 ):
@@ -31,6 +28,7 @@ def rotate_3d(
             image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
             color = color[:3]
 
+    dx, dy, dz = 0, 0, 0
     pitch, yaw, roll = _get_rad(theta, phi, gamma)
     d = np.sqrt(image_height**2 + image_width**2)
     focal = d / (2 * np.sin(roll) if np.sin(roll) != 0 else 1)
