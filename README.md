@@ -1,6 +1,6 @@
 # cv_rotate_3d
 OpenCVでX軸、Y軸、Z軸の回転を行うサンプルです。<br>
-![image](https://github.com/Kazuhito00/cv_rotate_3d/assets/37477845/f1a36082-5762-47c1-84d7-db28be57648e)
+<img src="https://github.com/user-attachments/assets/535de9ba-c717-44d6-ac08-2c71a9a76754" loading="lazy" width="50%">
 
 # Requirement
 * OpenCV 3.4.2 or later
@@ -16,9 +16,6 @@ image = rotate_3d(
     theta=30,          # x軸を中心に回転(度)
     phi=30,            # y軸を中心に回転(度)
     gamma=30,          # z軸を中心に回転(度)
-    dx=0,              # x軸方向に平行移動(ピクセル)
-    dy=0,              # y軸方向に平行移動(ピクセル)
-    dz=0,              # z軸方向に平行移動(ピクセル)
     color=(0, 255, 0), # 回転時に発生する余白の色
 )
 ```
