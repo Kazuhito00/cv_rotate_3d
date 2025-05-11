@@ -17,6 +17,7 @@ image = rotate_3d(
     phi=30,            # y軸を中心に回転(度)
     gamma=30,          # z軸を中心に回転(度)
     color=(0, 255, 0), # 回転時に発生する余白の色
+    transparent=False, # 背景を透過するか否か
 )
 ```
 
